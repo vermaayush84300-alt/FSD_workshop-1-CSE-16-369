@@ -1,0 +1,92 @@
+* {
+    margin: 0%;
+    padding: 0%;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    background-color: #f1aeae;
+}
+
+.main {
+    width: 100%;
+    height: 100%;
+}
+
+.card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 300px;
+    width: 230px;
+    border: 2px solid #0f0f0f;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#card1 {
+    z-index: 5;
+}
+
+#card2 {
+    rotate: -6deg;
+    z-index: 4;
+}
+
+#card3 {
+    rotate: -12deg;
+    z-index: 3;
+}
+
+#card4 {
+    rotate: -18deg;
+    z-index: 2;
+
+}
+
+#card5 {
+    rotate: -24deg;
+    z-index: 1;
+}
+
+img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+#card1.hover {
+    z-index: 10;
+}
+
+#card2.hover {
+    z-index: 20;
+}
+
+#card3.hover {
+    z-index: 20;
+}
+
+#card3.hover {
+    z-index: 10;
+}
+
+#card4.hover {
+    z-index: 10;
+}
+
+#card5.hover {
+    z-index: 10;
+}
+
+h1 {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #0f0f0f;
+}

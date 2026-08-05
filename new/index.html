@@ -1,0 +1,2138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KisanAI — Smart Crop Recommendation System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+    <style>
+        :root {
+            --green-950: #0d1f06;
+            --green-900: #173404;
+            --green-800: #27500a;
+            --green-700: #43731c;
+            --green-600: #4a8a16;
+            --green-500: #639922;
+            --green-400: #97c459;
+            --green-300: #c0dd97;
+            --green-200: #ddeebb;
+            --green-100: #eaf3de;
+            --green-50: #f4f9ee;
+            --amber-600: #ba7517;
+            --amber-100: #faeeda;
+            --red-600: #a32d2d;
+            --red-100: #fcebeb;
+            --blue-600: #185fa5;
+            --blue-100: #e6f1fb;
+            --surface: #ffffff;
+            --surface-2: #f7f9f4;
+            --surface-3: #f0f4ea;
+            --border: rgba(59, 109, 17, 0.12);
+            --border-strong: rgba(59, 109, 17, 0.25);
+            --text: #1a2410;
+            --text-2: #4a6030;
+            --text-3: #7a9060;
+            --shadow-sm: 0 1px 3px rgba(27, 77, 4, 0.08);
+            --shadow-md: 0 4px 16px rgba(27, 77, 4, 0.12);
+            --shadow-lg: 0 8px 32px rgba(27, 77, 4, 0.16);
+            --radius: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --surface: #111a08;
+                --surface-2: #182310;
+                --surface-3: #1f2d14;
+                --border: rgba(144, 200, 60, 0.15);
+                --border-strong: rgba(144, 200, 60, 0.28);
+                --text: #e8f5d8;
+                --text-2: #b4d480;
+                --text-3: #7aab45;
+                --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+                --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+                --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+                --green-100: #1a2e0e;
+                --amber-100: #2a1e06;
+                --red-100: #2a0e0e;
+                --blue-100: #0a1828;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--surface-2);
+            color: var(--text);
+            min-height: 100vh;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Syne', sans-serif;
+        }
+
+        /* ─── TOPBAR ─── */
+        .topbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 20px;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .brand-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--green-700), var(--green-500));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-logo i {
+            color: white;
+            font-size: 20px;
+        }
+
+        .brand-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .brand-name span {
+            color: var(--green-600);
+        }
+
+        .topbar-meta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .loc-pill {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: var(--text-3);
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .loc-pill i {
+            font-size: 13px;
+            color: var(--green-600);
+        }
+
+        .chat-fab-btn {
+            background: linear-gradient(135deg, var(--green-700), var(--green-500));
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .chat-fab-btn:hover {
+            transform: scale(1.08);
+            box-shadow: var(--shadow-md);
+        }
+
+        .chat-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ef4444;
+            border: 2px solid var(--surface);
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.4
+            }
+        }
+
+        /* ─── TABS ─── */
+        .tabs-wrap {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tabs-wrap::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tabs {
+            display: flex;
+            padding: 0 16px;
+            min-width: max-content;
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 14px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-3);
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color 0.2s, border-color 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .tab i {
+            font-size: 16px;
+        }
+
+        .tab.active {
+            color: var(--green-700);
+            border-bottom-color: var(--green-700);
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--text);
+        }
+
+        /* ─── MAIN CONTENT ─── */
+        .main {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+
+        .panel {
+            display: none;
+            animation: fadeUp 0.3s ease;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        /* ─── CARDS ─── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Syne', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-2);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-header i {
+            font-size: 16px;
+            color: var(--green-600);
+        }
+
+        /* ─── FORM INPUTS ─── */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-3);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .field select,
+        .field input {
+            width: 100%;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius);
+            background: var(--surface-2);
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .field select:focus,
+        .field input:focus {
+            border-color: var(--green-600);
+            box-shadow: 0 0 0 3px rgba(99, 153, 34, 0.15);
+        }
+
+        /* ─── BUTTONS ─── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'DM Sans', sans-serif;
+            border-radius: var(--radius);
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--green-700), var(--green-600));
+            color: white;
+            box-shadow: 0 2px 8px rgba(59, 109, 17, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(59, 109, 17, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* ─── CROP RESULT ─── */
+        .crop-hero {
+            background: linear-gradient(135deg, var(--green-100), var(--green-50));
+            border: 1px solid var(--green-300);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .crop-icon-wrap {
+            width: 56px;
+            height: 56px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--green-700), var(--green-500));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(59, 109, 17, 0.3);
+        }
+
+        .crop-icon-wrap i {
+            color: white;
+            font-size: 28px;
+        }
+
+        .crop-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--green-800);
+        }
+
+        .crop-subtitle {
+            font-size: 12px;
+            color: var(--green-600);
+            margin-top: 2px;
+        }
+
+        .conf-bar-wrap {
+            margin-top: 10px;
+        }
+
+        .conf-label {
+            font-size: 11px;
+            color: var(--green-700);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .conf-track {
+            height: 6px;
+            background: var(--green-200);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .conf-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--green-600), var(--green-400));
+            border-radius: 3px;
+            transition: width 1.2s cubic-bezier(.4, 0, .2, 1);
+            width: 0;
+        }
+
+        .alts-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .alt-chip {
+            padding: 5px 13px;
+            border-radius: 20px;
+            background: var(--surface-3);
+            border: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--text-2);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* ─── INFO ROWS ─── */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-k {
+            color: var(--text-3);
+        }
+
+        .info-v {
+            font-weight: 500;
+            color: var(--text);
+            text-align: right;
+        }
+
+        /* ─── TWO COL ─── */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        @media (max-width: 560px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ─── WEATHER ─── */
+        .wx-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 10px;
+        }
+
+        .wx-card {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 10px;
+            text-align: center;
+        }
+
+        .wx-card .wx-icon {
+            font-size: 24px;
+            color: var(--green-600);
+            margin-bottom: 6px;
+        }
+
+        .wx-card .wx-val {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            font-family: 'Syne', sans-serif;
+        }
+
+        .wx-card .wx-lbl {
+            font-size: 11px;
+            color: var(--text-3);
+            margin-top: 2px;
+        }
+
+        .alert-bar {
+            background: var(--amber-100);
+            border: 1px solid var(--amber-600);
+            border-radius: var(--radius);
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: var(--amber-600);
+        }
+
+        .forecast-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .forecast-scroll::-webkit-scrollbar {
+            height: 3px;
+        }
+
+        .forecast-scroll::-webkit-scrollbar-thumb {
+            background: var(--green-300);
+            border-radius: 2px;
+        }
+
+        .fc-card {
+            flex: 0 0 68px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px 8px;
+            text-align: center;
+        }
+
+        .fc-day {
+            font-size: 11px;
+            color: var(--text-3);
+        }
+
+        .fc-icon {
+            font-size: 20px;
+            color: var(--green-600);
+            margin: 4px 0;
+        }
+
+        .fc-temp {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .chart-box {
+            position: relative;
+            height: 220px;
+        }
+
+        /* ─── FERTILIZER / PESTICIDE ─── */
+        .fert-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 8px;
+        }
+
+        .fert-badge {
+            min-width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Syne', sans-serif;
+            flex-shrink: 0;
+        }
+
+        .badge-n {
+            background: var(--blue-100);
+            color: var(--blue-600);
+        }
+
+        .badge-p {
+            background: #ffe9e9;
+            color: #b91c1c;
+        }
+
+        .badge-k {
+            background: var(--green-100);
+            color: var(--green-800);
+        }
+
+        .badge-spray {
+            background: var(--surface-3);
+            color: var(--text-2);
+            font-size: 10px;
+        }
+
+        .fert-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .fert-detail {
+            font-size: 12px;
+            color: var(--text-3);
+            margin-top: 2px;
+        }
+
+        .fert-qty {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--green-700);
+            white-space: nowrap;
+            margin-left: auto;
+        }
+
+        .risk-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .risk-high {
+            background: #ef4444;
+        }
+
+        .risk-med {
+            background: #f59e0b;
+        }
+
+        .risk-low {
+            background: var(--green-500);
+        }
+
+        .risk-badge {
+            font-size: 11px;
+            padding: 2px 9px;
+            border-radius: 12px;
+            font-weight: 500;
+            margin-left: auto;
+            white-space: nowrap;
+        }
+
+        .rbadge-high {
+            background: var(--red-100);
+            color: var(--red-600);
+        }
+
+        .rbadge-med {
+            background: var(--amber-100);
+            color: var(--amber-600);
+        }
+
+        .rbadge-low {
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+
+        /* ─── GROWTH TIMELINE ─── */
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 10px;
+            bottom: 10px;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--green-400), var(--green-200));
+            border-radius: 1px;
+        }
+
+        .tl-item {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .tl-dot {
+            position: absolute;
+            left: -20px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid var(--surface);
+        }
+
+        .tl-dot.done {
+            background: var(--green-600);
+        }
+
+        .tl-dot.current {
+            background: var(--green-400);
+            box-shadow: 0 0 0 4px rgba(99, 153, 34, 0.2);
+        }
+
+        .tl-dot.future {
+            background: var(--border-strong);
+        }
+
+        .tl-stage {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .tl-desc {
+            font-size: 12px;
+            color: var(--text-3);
+            margin-top: 2px;
+        }
+
+        .tl-date {
+            font-size: 11px;
+            color: var(--green-600);
+            font-weight: 500;
+            margin-top: 3px;
+        }
+
+        /* ─── HARVEST ─── */
+        .harvest-hero {
+            background: linear-gradient(135deg, var(--green-100), var(--green-50));
+            border: 1px solid var(--green-300);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 14px;
+        }
+
+        .ring-wrap {
+            position: relative;
+            width: 72px;
+            height: 72px;
+            flex-shrink: 0;
+        }
+
+        .ring-wrap svg {
+            transform: rotate(-90deg);
+        }
+
+        .ring-pct {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--green-800);
+        }
+
+        /* ─── LOADING ─── */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 40px;
+            color: var(--text-3);
+            font-size: 13px;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-strong);
+            border-top-color: var(--green-600);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ─── CHATBOT ─── */
+        .chat-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 500;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s;
+        }
+
+        .chat-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .chat-panel {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            width: 380px;
+            max-width: 100vw;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 501;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .chat-panel.open {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 480px) {
+            .chat-panel {
+                width: 100vw;
+            }
+        }
+
+        .chat-head {
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--green-800), var(--green-600));
+            color: white;
+        }
+
+        .chat-head-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .chat-head-icon i {
+            font-size: 20px;
+        }
+
+        .chat-head-info {
+            flex: 1;
+        }
+
+        .chat-head-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .chat-head-status {
+            font-size: 11px;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #4ade80;
+        }
+
+        .chat-close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: background 0.2s;
+        }
+
+        .chat-close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--green-300);
+            border-radius: 2px;
+        }
+
+        .msg-wrap {
+            display: flex;
+            gap: 8px;
+            max-width: 92%;
+        }
+
+        .msg-wrap.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .msg-wrap.bot {
+            align-self: flex-start;
+        }
+
+        .msg-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .msg-avatar.bot-av {
+            background: linear-gradient(135deg, var(--green-700), var(--green-500));
+            color: white;
+        }
+
+        .msg-avatar.user-av {
+            background: var(--surface-3);
+            border: 1px solid var(--border);
+            color: var(--text-2);
+        }
+
+        .msg-bubble {
+            padding: 10px 13px;
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .msg-bubble.bot-b {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+            color: var(--text);
+        }
+
+        .msg-bubble.user-b {
+            background: linear-gradient(135deg, var(--green-700), var(--green-600));
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .msg-time {
+            font-size: 10px;
+            color: var(--text-3);
+            margin-top: 4px;
+        }
+
+        .user .msg-time {
+            text-align: right;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 10px 13px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            border-bottom-left-radius: 4px;
+            width: fit-content;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green-500);
+            animation: typing 1.2s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: translateY(0)
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateY(-4px)
+            }
+        }
+
+        /* Quick suggestions */
+        .quick-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 10px 16px 0;
+        }
+
+        .q-chip {
+            padding: 5px 11px;
+            border-radius: 16px;
+            background: var(--green-100);
+            border: 1px solid var(--green-300);
+            font-size: 11px;
+            color: var(--green-800);
+            cursor: pointer;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
+        .q-chip:hover {
+            background: var(--green-200);
+        }
+
+        /* Chat input bar */
+        .chat-input-bar {
+            padding: 12px 14px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .chat-input-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface-2);
+            border: 1px solid var(--border-strong);
+            border-radius: 24px;
+            padding: 5px 5px 5px 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .chat-input-row:focus-within {
+            border-color: var(--green-600);
+            box-shadow: 0 0 0 3px rgba(99, 153, 34, 0.15);
+        }
+
+        #chat-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
+            outline: none;
+            min-height: 28px;
+            resize: none;
+            line-height: 1.5;
+        }
+
+        #chat-input::placeholder {
+            color: var(--text-3);
+        }
+
+        .voice-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--surface-3);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--text-2);
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .voice-btn:hover {
+            background: var(--green-100);
+            color: var(--green-700);
+            border-color: var(--green-400);
+        }
+
+        .voice-btn.recording {
+            background: #fef2f2;
+            border-color: #ef4444;
+            color: #ef4444;
+            animation: voice-pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes voice-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4)
+            }
+
+            50% {
+                box-shadow: 0 0 0 8px rgba(239, 68, 68, 0)
+            }
+        }
+
+        .send-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--green-700), var(--green-500));
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            transition: transform 0.15s, box-shadow 0.15s;
+            flex-shrink: 0;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 2px 8px rgba(59, 109, 17, 0.4);
+        }
+
+        /* ─── VOICE WAVE ─── */
+        .voice-wave {
+            display: none;
+            align-items: center;
+            gap: 3px;
+            padding: 8px 16px;
+            justify-content: center;
+        }
+
+        .voice-wave.active {
+            display: flex;
+        }
+
+        .wave-bar {
+            width: 3px;
+            background: var(--green-500);
+            border-radius: 2px;
+            animation: wave-bar 0.9s ease-in-out infinite;
+        }
+
+        .wave-bar:nth-child(1) {
+            height: 6px;
+            animation-delay: 0s
+        }
+
+        .wave-bar:nth-child(2) {
+            height: 14px;
+            animation-delay: 0.1s
+        }
+
+        .wave-bar:nth-child(3) {
+            height: 20px;
+            animation-delay: 0.2s
+        }
+
+        .wave-bar:nth-child(4) {
+            height: 14px;
+            animation-delay: 0.3s
+        }
+
+        .wave-bar:nth-child(5) {
+            height: 6px;
+            animation-delay: 0.4s
+        }
+
+        .wave-bar:nth-child(6) {
+            height: 18px;
+            animation-delay: 0.1s
+        }
+
+        .wave-bar:nth-child(7) {
+            height: 10px;
+            animation-delay: 0.25s
+        }
+
+        @keyframes wave-bar {
+
+            0%,
+            100% {
+                transform: scaleY(0.3)
+            }
+
+            50% {
+                transform: scaleY(1)
+            }
+        }
+
+        .voice-status {
+            font-size: 12px;
+            color: var(--text-3);
+            text-align: center;
+            padding: 0 16px 8px;
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 640px) {
+            .main {
+                padding: 12px 10px;
+            }
+
+            .card {
+                padding: 14px 14px;
+            }
+
+            .input-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .crop-title {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tab {
+                padding: 12px 12px;
+                font-size: 12px;
+            }
+        }
+
+        /* ─── SECTION LABEL ─── */
+        .section-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: var(--text-3);
+            margin-bottom: 8px;
+        }
+
+        /* ─── CARE TIP ITEM ─── */
+        .care-item {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            color: var(--text);
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .care-item:last-child {
+            border-bottom: none;
+        }
+
+        .care-item i {
+            font-size: 15px;
+            color: var(--green-600);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="brand-wrap">
+            <div class="brand-logo"><i class="ti ti-plant-2"></i></div>
+            <span class="brand-name">Agriculture</span>
+        </div>
+        <div class="topbar-meta">
+            <div class="loc-pill">
+                <i class="ti ti-map-pin"></i>
+                <span id="loc-name">Locating…</span>
+            </div>
+            <button class="chat-fab-btn" id="open-chat" title="Open AI Assistant"
+                aria-label="Open AI farming assistant">
+                <i class="ti ti-messages"></i>
+                <span class="chat-badge"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- TABS -->
+    <div class="tabs-wrap">
+        <div class="tabs" role="tablist">
+            <div class="tab active" data-tab="crop" role="tab"><i class="ti ti-seeding"></i> Crop</div>
+            <div class="tab" data-tab="weather" role="tab"><i class="ti ti-cloud"></i> Weather</div>
+            <div class="tab" data-tab="fertilizer" role="tab"><i class="ti ti-droplet-half-2"></i> Fertilizer</div>
+            <div class="tab" data-tab="pesticide" role="tab"><i class="ti ti-bug"></i> Pests</div>
+            <div class="tab" data-tab="growth" role="tab"><i class="ti ti-chart-line"></i> Growth</div>
+            <div class="tab" data-tab="harvest" role="tab"><i class="ti ti-wheat"></i> Harvest</div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main" id="main-content">
+
+        <!-- ── CROP TAB ── -->
+        <div class="panel active" id="panel-crop">
+            <div class="card">
+                <div class="card-header"><i class="ti ti-sliders"></i> Farm parameters</div>
+                <div class="input-grid">
+                    <div class="field">
+                        <label>Soil type</label>
+                        <select id="soil">
+                            <option value="alluvial">Alluvial</option>
+                            <option value="black">Black (Regur)</option>
+                            <option value="red">Red & Laterite</option>
+                            <option value="sandy">Sandy / Loamy</option>
+                            <option value="clay">Clay</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Season</label>
+                        <select id="season">
+                            <option value="kharif">Kharif (Jun–Sep)</option>
+                            <option value="rabi">Rabi (Oct–Mar)</option>
+                            <option value="zaid">Zaid (Mar–Jun)</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Temperature (°C)</label>
+                        <input type="number" id="temp-in" value="28" min="5" max="50">
+                    </div>
+                    <div class="field">
+                        <label>Humidity (%)</label>
+                        <input type="number" id="humid-in" value="70" min="10" max="100">
+                    </div>
+                    <div class="field">
+                        <label>Rainfall (mm)</label>
+                        <input type="number" id="rain-in" value="120" min="0" max="5000">
+                    </div>
+                    <div class="field">
+                        <label>Land area (acres)</label>
+                        <input type="number" id="area-in" value="2" min="0.1" max="1000" step="0.1">
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="btn-recommend">
+                    <i class="ti ti-cpu"></i> Get AI Recommendation
+                </button>
+            </div>
+
+            <div id="crop-loading" class="loading hidden">
+                <div class="spinner"></div> Analysing soil & climate data…
+            </div>
+
+            <div id="crop-results" class="hidden">
+                <div class="card">
+                    <div class="card-header"><i class="ti ti-star"></i> Top recommendation</div>
+                    <div class="crop-hero">
+                        <div class="crop-icon-wrap"><i id="crop-icon-i" class="ti ti-plant-2"></i></div>
+                        <div style="flex:1">
+                            <div class="crop-title" id="crop-name-out">—</div>
+                            <div class="crop-subtitle" id="crop-sub-out">—</div>
+                            <div class="conf-bar-wrap">
+                                <div class="conf-label" id="conf-label">Confidence: 0%</div>
+                                <div class="conf-track">
+                                    <div class="conf-fill" id="conf-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-label">Alternative crops</div>
+                    <div class="alts-row" id="alt-crops"></div>
+                </div>
+
+                <div class="two-col">
+                    <div class="card">
+                        <div class="card-header"><i class="ti ti-info-circle"></i> Crop profile</div>
+                        <div id="crop-profile"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><i class="ti ti-calendar"></i> Planting window</div>
+                        <div id="planting-info"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><i class="ti ti-chart-bar"></i> Yield estimate</div>
+                    <div class="chart-box"><canvas id="yield-crop-chart" role="img"
+                            aria-label="Estimated crop yield chart"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── WEATHER TAB ── -->
+        <div class="panel" id="panel-weather">
+            <div id="wx-loading" class="loading">
+                <div class="spinner"></div> Fetching live weather data…
+            </div>
+            <div id="wx-content" class="hidden">
+                <div class="card">
+                    <div class="card-header"><i class="ti ti-cloud"></i> Current conditions</div>
+                    <div id="alert-wrap"></div>
+                    <div class="wx-grid" id="wx-grid"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><i class="ti ti-calendar-week"></i> 7-day forecast</div>
+                    <div class="forecast-scroll" id="forecast-row"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><i class="ti ti-cloud-rain"></i> Rainfall forecast (mm)</div>
+                    <div class="chart-box"><canvas id="rain-chart" role="img"
+                            aria-label="7-day rainfall forecast chart"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── FERTILIZER TAB ── -->
+        <div class="panel" id="panel-fertilizer">
+            <div class="card">
+                <div class="card-header"><i class="ti ti-droplet-half-2"></i> Recommended fertilizers</div>
+                <div id="fert-list"></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><i class="ti ti-clock"></i> Application schedule</div>
+                <div id="fert-schedule"></div>
+            </div>
+        </div>
+
+        <!-- ── PESTICIDE TAB ── -->
+        <div class="panel" id="panel-pesticide">
+            <div class="card">
+                <div class="card-header"><i class="ti ti-bug"></i> Pest & disease risk</div>
+                <div id="pest-risk-list"></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><i class="ti ti-spray"></i> Pesticide recommendations</div>
+                <div id="pest-rec-list"></div>
+            </div>
+        </div>
+
+        <!-- ── GROWTH TAB ── -->
+        <div class="panel" id="panel-growth">
+            <div class="card">
+                <div class="card-header"><i class="ti ti-chart-line"></i> Growth stage tracker</div>
+                <div class="timeline" id="growth-timeline"></div>
+            </div>
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-header"><i class="ti ti-droplet"></i> Watering schedule</div>
+                    <div id="water-schedule"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><i class="ti ti-bulb"></i> Care tips</div>
+                    <div id="care-tips"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── HARVEST TAB ── -->
+        <div class="panel" id="panel-harvest">
+            <div class="card">
+                <div class="card-header"><i class="ti ti-wheat"></i> Harvest readiness</div>
+                <div class="harvest-hero">
+                    <div class="ring-wrap">
+                        <svg width="72" height="72" viewBox="0 0 72 72">
+                            <circle cx="36" cy="36" r="28" fill="none" stroke="#c0dd97" stroke-width="7" />
+                            <circle cx="36" cy="36" r="28" fill="none" stroke="#3b6d11" stroke-width="7"
+                                stroke-dasharray="175.9" stroke-dashoffset="47.5" stroke-linecap="round"
+                                id="harvest-ring" />
+                        </svg>
+                        <div class="ring-pct" id="harvest-pct">73%</div>
+                    </div>
+                    <div>
+                        <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--green-800)"
+                            id="harvest-title">Good window in ~3 weeks</div>
+                        <div style="font-size:12px;color:var(--green-600);margin-top:4px" id="harvest-sub">Optimal
+                            weather conditions aligning</div>
+                    </div>
+                </div>
+                <div class="section-label">Harvest details</div>
+                <div id="harvest-details"></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><i class="ti ti-trending-up"></i> Yield prediction (q/ha)</div>
+                <div class="chart-box"><canvas id="yield-chart" role="img"
+                        aria-label="Crop yield prediction chart"></canvas></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ── CHAT OVERLAY ── -->
+    <div class="chat-overlay" id="chat-overlay"></div>
+
+    <!-- ── CHAT PANEL ── -->
+    <div class="chat-panel" id="chat-panel" role="dialog" aria-label="KisanAI Assistant">
+        <div class="chat-head">
+            <div class="chat-head-icon"><i class="ti ti-robot"></i></div>
+            <div class="chat-head-info">
+                <div class="chat-head-title">KisanAI Assistant</div>
+                <div class="chat-head-status"><span class="status-dot"></span> Online · Powered by Claude AI</div>
+            </div>
+            <button class="chat-close-btn" id="close-chat" aria-label="Close chat"><i class="ti ti-x"></i></button>
+        </div>
+
+        <div class="chat-messages" id="chat-messages"></div>
+
+        <!-- Quick suggestions -->
+        <div class="quick-chips" id="quick-chips">
+            <span class="q-chip" data-q="Best crop for black soil in Kharif season?">🌱 Kharif crops</span>
+            <span class="q-chip" data-q="How much water does wheat need?">💧 Wheat watering</span>
+            <span class="q-chip" data-q="How to prevent rice blast disease?">🍃 Rice disease</span>
+            <span class="q-chip" data-q="Best fertilizer for cotton crop?">🌿 Cotton fertilizer</span>
+            <span class="q-chip" data-q="When to harvest wheat?">🌾 Harvest time</span>
+            <span class="q-chip" data-q="How to improve soil health naturally?">🪱 Soil health</span>
+        </div>
+
+        <div class="voice-wave" id="voice-wave">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+        </div>
+        <div class="voice-status hidden" id="voice-status">🎙️ Listening… speak your farming question</div>
+
+        <div class="chat-input-bar">
+            <div class="chat-input-row">
+                <textarea id="chat-input" placeholder="Ask anything about farming…" rows="1"></textarea>
+                <button class="voice-btn" id="voice-btn" title="Voice input" aria-label="Start voice input">
+                    <i class="ti ti-microphone"></i>
+                </button>
+                <button class="send-btn" id="send-btn" aria-label="Send message">
+                    <i class="ti ti-send"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ═══════════════════════════════════════════
+           DATA MODELS
+        ═══════════════════════════════════════════ */
+        const CROP_DB = {
+            kharif: {
+                alluvial: { name: 'Rice', icon: 'ti-plant-2', conf: 91, sub: 'Ideal for alluvial soil + high humidity', alts: ['Maize', 'Cotton', 'Soybean'], duration: '120–150 days', water: 'High (150–200 cm)', temp: '22–32°C', plant: 'June–July', harvest: 'Oct–Nov', yield: [5, 15, 38, 52, 55, 50] },
+                black: { name: 'Cotton', icon: 'ti-shirt', conf: 88, sub: 'Black soil retains moisture for cotton', alts: ['Sorghum', 'Soybean', 'Groundnut'], duration: '150–180 days', water: 'Moderate', temp: '25–35°C', plant: 'May–June', harvest: 'Oct–Dec', yield: [3, 10, 28, 45, 50, 42] },
+                red: { name: 'Groundnut', icon: 'ti-seeding', conf: 84, sub: 'Thrives in red laterite with good drainage', alts: ['Maize', 'Sorghum', 'Bajra'], duration: '110–130 days', water: 'Low–moderate', temp: '25–30°C', plant: 'June–July', harvest: 'Sep–Oct', yield: [4, 12, 32, 48, 52, 46] },
+                sandy: { name: 'Bajra', icon: 'ti-wheat', conf: 87, sub: 'Sandy loam suits drought-tolerant millet', alts: ['Sorghum', 'Sesame', 'Cowpea'], duration: '80–90 days', water: 'Low', temp: '28–35°C', plant: 'June–July', harvest: 'Sep–Oct', yield: [3, 9, 25, 40, 44, 38] },
+                clay: { name: 'Sugarcane', icon: 'ti-plant', conf: 82, sub: 'Clay soils support water-intensive sugarcane', alts: ['Rice', 'Banana', 'Taro'], duration: '270–365 days', water: 'Very high', temp: '20–35°C', plant: 'Feb–Apr', harvest: 'Jan–Mar', yield: [8, 25, 60, 90, 100, 95] }
+            },
+            rabi: {
+                alluvial: { name: 'Wheat', icon: 'ti-wheat', conf: 94, sub: 'Alluvial plains — India\'s wheat heartland', alts: ['Mustard', 'Barley', 'Gram'], duration: '120–130 days', water: 'Moderate', temp: '10–24°C', plant: 'Oct–Nov', harvest: 'Mar–Apr', yield: [6, 18, 40, 55, 58, 54] },
+                black: { name: 'Chickpea', icon: 'ti-seeding', conf: 86, sub: 'Legume suited to black soil cool season', alts: ['Wheat', 'Linseed', 'Coriander'], duration: '90–110 days', water: 'Low', temp: '15–25°C', plant: 'Oct–Nov', harvest: 'Feb–Mar', yield: [3, 8, 22, 35, 38, 33] },
+                red: { name: 'Mustard', icon: 'ti-plant-2', conf: 83, sub: 'Mustard adapts well to red soil in winter', alts: ['Lentil', 'Gram', 'Wheat'], duration: '90–110 days', water: 'Low', temp: '10–25°C', plant: 'Oct–Nov', harvest: 'Feb–Mar', yield: [2, 7, 18, 28, 30, 26] },
+                sandy: { name: 'Barley', icon: 'ti-wheat', conf: 85, sub: 'Hardy barley suits sandy rabi conditions', alts: ['Mustard', 'Chickpea', 'Wheat'], duration: '100–120 days', water: 'Low', temp: '12–25°C', plant: 'Nov', harvest: 'Mar–Apr', yield: [3, 9, 22, 34, 36, 31] },
+                clay: { name: 'Lentil', icon: 'ti-seeding', conf: 80, sub: 'Clay moisture retention benefits lentil', alts: ['Gram', 'Peas', 'Wheat'], duration: '100–110 days', water: 'Low', temp: '15–25°C', plant: 'Oct–Nov', harvest: 'Feb–Mar', yield: [2, 6, 16, 24, 26, 22] }
+            },
+            zaid: {
+                alluvial: { name: 'Watermelon', icon: 'ti-plant', conf: 88, sub: 'Zaid crop for alluvial riverbeds', alts: ['Cucumber', 'Muskmelon', 'Moong'], duration: '70–90 days', water: 'Moderate', temp: '25–35°C', plant: 'Mar', harvest: 'May–Jun', yield: [10, 35, 80, 110, 118, 100] },
+                black: { name: 'Moong Dal', icon: 'ti-seeding', conf: 82, sub: 'Summer pulse tolerates black soil heat', alts: ['Urad', 'Cowpea', 'Cucumber'], duration: '60–70 days', water: 'Low', temp: '28–40°C', plant: 'Mar–Apr', harvest: 'Jun', yield: [2, 5, 14, 20, 22, 18] },
+                red: { name: 'Sunflower', icon: 'ti-sun', conf: 84, sub: 'Heat-tolerant sunflower for red soils', alts: ['Sesame', 'Moong', 'Maize'], duration: '80–90 days', water: 'Moderate', temp: '25–35°C', plant: 'Feb–Mar', harvest: 'May–Jun', yield: [4, 12, 28, 40, 42, 36] },
+                sandy: { name: 'Sesame', icon: 'ti-plant-2', conf: 86, sub: 'Sandy light soils ideal for sesame', alts: ['Sunflower', 'Moong', 'Cowpea'], duration: '80–100 days', water: 'Low', temp: '25–40°C', plant: 'Mar–Apr', harvest: 'Jun–Jul', yield: [3, 8, 18, 26, 28, 24] },
+                clay: { name: 'Bitter Gourd', icon: 'ti-plant', conf: 79, sub: 'Clay moisture helps summer vegetables', alts: ['Cowpea', 'Okra', 'Bottle Gourd'], duration: '60–75 days', water: 'Moderate', temp: '25–38°C', plant: 'Mar–Apr', harvest: 'Jun', yield: [5, 18, 42, 58, 60, 52] }
+            }
+        };
+
+        const FERT_DB = {
+            Rice: [
+                { type: 'n', label: 'N', name: 'Urea (46-0-0)', detail: 'Nitrogen for leaf growth & tillering', qty: '50 kg/acre', time: 'Basal + top-dress at tillering' },
+                { type: 'p', label: 'P', name: 'DAP (18-46-0)', detail: 'Phosphorus for root establishment', qty: '25 kg/acre', time: 'Basal application before transplanting' },
+                { type: 'k', label: 'K', name: 'MOP (0-0-60)', detail: 'Potassium improves grain quality', qty: '20 kg/acre', time: 'Basal + panicle initiation stage' }
+            ],
+            Wheat: [
+                { type: 'n', label: 'N', name: 'Urea (46-0-0)', detail: 'Split application for tiller formation', qty: '60 kg/acre', time: 'Pre-sow + crown root initiation' },
+                { type: 'p', label: 'P', name: 'SSP (0-16-0)', detail: 'Single super phosphate', qty: '30 kg/acre', time: 'Basal at sowing' },
+                { type: 'k', label: 'K', name: 'SOP (0-0-50)', detail: 'Sulphate of potash for grain filling', qty: '15 kg/acre', time: 'At sowing + flag leaf stage' }
+            ],
+            Cotton: [
+                { type: 'n', label: 'N', name: 'Urea (46-0-0)', detail: 'High nitrogen demand for boll formation', qty: '80 kg/acre', time: 'Split in 3 doses across season' },
+                { type: 'p', label: 'P', name: 'DAP (18-46-0)', detail: 'Phosphorus for root & boll development', qty: '35 kg/acre', time: 'Basal before sowing' },
+                { type: 'k', label: 'K', name: 'MOP (0-0-60)', detail: 'Potassium for fibre quality', qty: '30 kg/acre', time: 'At squaring + boll stage' }
+            ]
+        };
+
+        const PEST_DB = {
+            Rice: [
+                { name: 'Brown Plant Hopper', risk: 'high', pest: 'Imidacloprid 17.8 SL', qty: '0.5 ml/L water', sched: 'Weekly scouting; spray at >5 BPH/hill' },
+                { name: 'Stem Borer', risk: 'med', pest: 'Chlorpyrifos 20 EC', qty: '2.5 ml/L water', sched: 'At egg hatching; 2 sprays 15 days apart' },
+                { name: 'Blast Disease', risk: 'med', pest: 'Tricyclazole 75 WP', qty: '0.6 g/L water', sched: 'Preventive at booting; repeat if humid' }
+            ],
+            Wheat: [
+                { name: 'Rust (Yellow/Brown)', risk: 'high', pest: 'Propiconazole 25 EC', qty: '1 ml/L water', sched: 'Spray at first sign; 2–3 sprays 15d apart' },
+                { name: 'Aphids', risk: 'med', pest: 'Thiamethoxam 25 WG', qty: '0.2 g/L water', sched: 'At flag leaf; only if >20 aphids/cm²' },
+                { name: 'Karnal Bunt', risk: 'low', pest: 'Carboxin 37.5+Thiram 37.5', qty: '3 g/kg seed', sched: 'Pre-sowing seed treatment only' }
+            ],
+            Cotton: [
+                { name: 'Bollworm Complex', risk: 'high', pest: 'Emamectin Benzoate 5 SG', qty: '0.5 g/L water', sched: 'At 1% infestation; 3 sprays at 15d interval' },
+                { name: 'Whitefly', risk: 'med', pest: 'Diafenthiuron 50 WP', qty: '1.5 g/L water', sched: 'Spray underside of leaves; 2 rounds' },
+                { name: 'Leaf Curl Virus', risk: 'high', pest: 'Control vector (whitefly)', qty: 'As above', sched: 'Rogue infected plants; spray vector' }
+            ]
+        };
+
+        let currentCrop = 'Rice';
+        let wxChartInst = null, yieldChartInst = null, cropYieldChart = null;
+        let wxLoaded = false;
+
+        /* ─── TABS ─── */
+        document.querySelectorAll('.tab').forEach(t => {
+            t.addEventListener('click', () => switchTab(t.dataset.tab));
+        });
+
+        function switchTab(name) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+            document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+            if (name === 'weather' && !wxLoaded) loadWeather();
+            if (name === 'harvest') setTimeout(() => renderHarvestChart(), 100);
+        }
+
+        /* ─── CROP RECOMMENDATION ─── */
+        document.getElementById('btn-recommend').addEventListener('click', runRecommend);
+
+        function runRecommend() {
+            const soil = document.getElementById('soil').value;
+            const season = document.getElementById('season').value;
+            const loading = document.getElementById('crop-loading');
+            const results = document.getElementById('crop-results');
+            loading.classList.remove('hidden');
+            results.classList.add('hidden');
+            setTimeout(() => {
+                loading.classList.add('hidden');
+                results.classList.remove('hidden');
+                const data = CROP_DB[season]?.[soil] || CROP_DB.kharif.alluvial;
+                currentCrop = data.name;
+                document.getElementById('crop-name-out').textContent = data.name;
+                document.getElementById('crop-sub-out').textContent = data.sub;
+                document.getElementById('crop-icon-i').className = 'ti ' + data.icon;
+                document.getElementById('conf-label').textContent = 'Confidence: ' + data.conf + '%';
+                setTimeout(() => { document.getElementById('conf-fill').style.width = data.conf + '%'; }, 50);
+                document.getElementById('alt-crops').innerHTML = data.alts.map(a => `<span class="alt-chip"><i class="ti ti-seeding" style="font-size:13px"></i>${a}</span>`).join('');
+                document.getElementById('crop-profile').innerHTML = makeInfoRows([
+                    ['Duration', data.duration], ['Water need', data.water], ['Optimal temp', data.temp]
+                ]);
+                document.getElementById('planting-info').innerHTML = makeInfoRows([
+                    ['Planting', data.plant], ['Harvest', data.harvest], ['Season', season.charAt(0).toUpperCase() + season.slice(1)]
+                ]);
+                renderCropYieldChart(data.yield);
+                renderFertilizer(currentCrop);
+                renderPesticide(currentCrop);
+                renderGrowth(currentCrop);
+                renderHarvestDetails(currentCrop);
+            }, 1300);
+        }
+
+        function makeInfoRows(rows) {
+            return rows.map(([k, v]) => `<div class="info-row"><span class="info-k">${k}</span><span class="info-v">${v}</span></div>`).join('');
+        }
+
+        /* ─── CROP YIELD CHART ─── */
+        function renderCropYieldChart(ydata) {
+            if (cropYieldChart) cropYieldChart.destroy();
+            const ctx = document.getElementById('yield-crop-chart').getContext('2d');
+            cropYieldChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 2', 'Week 4', 'Week 6', 'Week 8', 'Week 10', 'Week 12'],
+                    datasets: [{ label: 'Yield (q/ha)', data: ydata, borderColor: '#3b6d11', backgroundColor: 'rgba(59,109,17,0.08)', fill: true, tension: 0.45, pointBackgroundColor: '#3b6d11', pointRadius: 4 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } } }
+            });
+        }
+
+        /* ─── WEATHER ─── */
+        function loadWeather() {
+            navigator.geolocation?.getCurrentPosition(
+                pos => fetchWeather(pos.coords.latitude, pos.coords.longitude),
+                () => fetchWeather(28.6139, 77.2090)
+            );
+        }
+
+        function fetchWeather(lat, lon) {
+            const KEY = '4b1c1adf9f864c79850d37a31a0d1e6a';
+            Promise.all([
+                fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${KEY}&units=metric`).then(r => r.json()),
+                fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${KEY}&units=metric`).then(r => r.json())
+            ]).then(([curr, fore]) => {
+                document.getElementById('loc-name').textContent = curr.name + ', ' + curr.sys.country;
+                const alertWrap = document.getElementById('alert-wrap');
+                if (curr.weather[0].main === 'Thunderstorm' || curr.wind.speed > 15) {
+                    alertWrap.innerHTML = `<div class="alert-bar"><i class="ti ti-alert-triangle"></i> Weather alert: ${curr.weather[0].description}. Avoid field operations today.</div>`;
+                } else { alertWrap.innerHTML = ''; }
+                document.getElementById('wx-grid').innerHTML = [
+                    { icon: 'ti-temperature', val: Math.round(curr.main.temp) + '°C', lbl: 'Temperature' },
+                    { icon: 'ti-droplet', val: curr.main.humidity + '%', lbl: 'Humidity' },
+                    { icon: 'ti-wind', val: Math.round(curr.wind.speed) + ' m/s', lbl: 'Wind speed' },
+                    { icon: 'ti-cloud-rain', val: (curr.rain?.['1h'] || 0) + ' mm', lbl: 'Rainfall 1h' },
+                    { icon: 'ti-eye', val: Math.round(curr.visibility / 1000) + ' km', lbl: 'Visibility' },
+                    { icon: 'ti-sun', val: curr.weather[0].main, lbl: 'Condition' }
+                ].map(x => `<div class="wx-card"><div class="wx-icon"><i class="ti ${x.icon}"></i></div><div class="wx-val">${x.val}</div><div class="wx-lbl">${x.lbl}</div></div>`).join('');
+                const days = []; const seen = {};
+                fore.list.forEach(f => {
+                    const d = new Date(f.dt * 1000);
+                    const label = d.toLocaleDateString('en-IN', { weekday: 'short' });
+                    if (!seen[label] && days.length < 7) { seen[label] = 1; days.push({ day: label, temp: Math.round(f.main.temp), rain: Math.round(f.rain?.['3h'] || 0), icon: wxIcon(f.weather[0].main) }); }
+                });
+                document.getElementById('forecast-row').innerHTML = days.map(d => `<div class="fc-card"><div class="fc-day">${d.day}</div><div class="fc-icon"><i class="ti ${d.icon}"></i></div><div class="fc-temp">${d.temp}°C</div></div>`).join('');
+                wxLoaded = true;
+                document.getElementById('wx-loading').classList.add('hidden');
+                document.getElementById('wx-content').classList.remove('hidden');
+                renderRainChart(days);
+            }).catch(() => {
+                document.getElementById('loc-name').textContent = 'Delhi, IN';
+                document.getElementById('wx-loading').classList.add('hidden');
+                document.getElementById('wx-content').classList.remove('hidden');
+                renderSimulatedWeather();
+            });
+        }
+
+        function wxIcon(main) {
+            return ({ 'Rain': 'ti-cloud-rain', 'Drizzle': 'ti-cloud-drizzle', 'Snow': 'ti-snowflake', 'Thunderstorm': 'ti-storm', 'Clear': 'ti-sun', 'Clouds': 'ti-cloud' }[main] || 'ti-cloud');
+        }
+
+        function renderSimulatedWeather() {
+            document.getElementById('wx-grid').innerHTML = [
+                { icon: 'ti-temperature', val: '33°C', lbl: 'Temperature' },
+                { icon: 'ti-droplet', val: '68%', lbl: 'Humidity' },
+                { icon: 'ti-wind', val: '7 m/s', lbl: 'Wind speed' },
+                { icon: 'ti-cloud-rain', val: '0 mm', lbl: 'Rainfall 1h' },
+                { icon: 'ti-eye', val: '10 km', lbl: 'Visibility' },
+                { icon: 'ti-sun', val: 'Clear', lbl: 'Condition' }
+            ].map(x => `<div class="wx-card"><div class="wx-icon"><i class="ti ${x.icon}"></i></div><div class="wx-val">${x.val}</div><div class="wx-lbl">${x.lbl}</div></div>`).join('');
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d, i) => ({ day: d, temp: 30 + Math.round(Math.sin(i) * 4), rain: Math.round(Math.max(0, Math.random() * 25 - 5)), icon: i === 2 || i === 5 ? 'ti-cloud-rain' : 'ti-sun' }));
+            document.getElementById('forecast-row').innerHTML = days.map(d => `<div class="fc-card"><div class="fc-day">${d.day}</div><div class="fc-icon"><i class="ti ${d.icon}"></i></div><div class="fc-temp">${d.temp}°C</div></div>`).join('');
+            renderRainChart(days);
+        }
+
+        function renderRainChart(days) {
+            if (wxChartInst) wxChartInst.destroy();
+            const ctx = document.getElementById('rain-chart').getContext('2d');
+            wxChartInst = new Chart(ctx, { type: 'bar', data: { labels: days.map(d => d.day), datasets: [{ label: 'Rainfall mm', data: days.map(d => d.rain), backgroundColor: '#639922', borderRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } } } });
+        }
+
+        /* ─── FERTILIZER ─── */
+        function renderFertilizer(crop) {
+            const list = FERT_DB[crop] || FERT_DB['Rice'];
+            document.getElementById('fert-list').innerHTML = list.map(f => `
+    <div class="fert-item">
+      <div class="fert-badge badge-${f.type}">${f.label}</div>
+      <div style="flex:1"><div class="fert-name">${f.name}</div><div class="fert-detail">${f.detail}</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">📅 ${f.time}</div></div>
+      <div class="fert-qty">${f.qty}</div>
+    </div>`).join('');
+            document.getElementById('fert-schedule').innerHTML = makeInfoRows([
+                ['Week 0 (Basal)', 'Full P & K + 1/3 N before sowing'],
+                ['Week 3–4', 'Top-dress 1/3 N at tillering'],
+                ['Week 7–8', 'Final 1/3 N at panicle initiation'],
+                ['As needed', 'Foliar Zinc Sulphate if deficiency seen']
+            ]);
+        }
+
+        /* ─── PESTICIDE ─── */
+        function renderPesticide(crop) {
+            const pests = PEST_DB[crop] || PEST_DB['Rice'];
+            document.getElementById('pest-risk-list').innerHTML = pests.map(p => `
+    <div class="fert-item">
+      <div class="risk-dot risk-${p.risk}"></div>
+      <div style="flex:1"><div class="fert-name">${p.name}</div></div>
+      <span class="risk-badge rbadge-${p.risk}">${p.risk.charAt(0).toUpperCase() + p.risk.slice(1)} risk</span>
+    </div>`).join('');
+            document.getElementById('pest-rec-list').innerHTML = pests.map(p => `
+    <div class="fert-item">
+      <div class="fert-badge badge-spray" style="font-size:10px;min-width:44px">SPRAY</div>
+      <div style="flex:1"><div class="fert-name">${p.pest}</div><div class="fert-detail">${p.name} — ${p.sched}</div></div>
+      <div class="fert-qty">${p.qty}</div>
+    </div>`).join('');
+        }
+
+        /* ─── GROWTH ─── */
+        function renderGrowth(crop) {
+            const stages = [
+                { s: 'Germination', desc: 'Seeds germinated, early seedling emergence', date: 'Day 1–7', state: 'done' },
+                { s: 'Vegetative', desc: 'Active tillering, leaf area development', date: 'Day 8–40', state: 'done' },
+                { s: 'Reproductive', desc: 'Flower initiation, panicle development', date: 'Day 41–80', state: 'current' },
+                { s: 'Grain filling', desc: 'Carbohydrate accumulation in grains', date: 'Day 81–110', state: 'future' },
+                { s: 'Maturity', desc: 'Grain hardening, physiological maturity', date: 'Day 111–130', state: 'future' }
+            ];
+            document.getElementById('growth-timeline').innerHTML = stages.map(s => `
+    <div class="tl-item">
+      <div class="tl-dot ${s.state}"></div>
+      <div class="tl-stage">${s.s}</div>
+      <div class="tl-desc">${s.desc}</div>
+      <div class="tl-date">${s.date}</div>
+    </div>`).join('');
+            document.getElementById('water-schedule').innerHTML = makeInfoRows([
+                ['At sowing', 'Light irrigation 5 cm'],
+                ['Day 7', 'Maintain 2–5 cm standing'],
+                ['Tillering', 'Saturated; avoid flooding'],
+                ['Flowering', 'Critical — ensure water'],
+                ['Grain fill', 'Reduce to field capacity'],
+                ['Pre-harvest', 'Drain 15 days before']
+            ]);
+            document.getElementById('care-tips').innerHTML = [
+                { icon: 'ti-plant', txt: 'Weed control in first 30 days is critical for yield' },
+                { icon: 'ti-temperature', txt: 'Monitor temp daily — chilling below 15°C harms flowering' },
+                { icon: 'ti-droplet', txt: 'Alternate wet-dry irrigation saves up to 30% water' },
+                { icon: 'ti-search', txt: 'Scout fields twice weekly for pest & disease signs' },
+                { icon: 'ti-flask', txt: 'Soil test every 2 seasons for micronutrient balance' }
+            ].map(t => `<div class="care-item"><i class="ti ${t.icon}"></i><span>${t.txt}</span></div>`).join('');
+        }
+
+        /* ─── HARVEST ─── */
+        function renderHarvestDetails(crop) {
+            document.getElementById('harvest-details').innerHTML = makeInfoRows([
+                ['Expected harvest', 'Oct 12–20, 2025'],
+                ['Ideal grain moisture', '14–16%'],
+                ['Best time of day', 'Early morning 6–9 AM'],
+                ['Weather needed', 'Dry, sunny, wind < 5 m/s'],
+                ['Post-harvest storage', '< 15°C, humidity < 65%']
+            ]);
+        }
+        function renderHarvestChart() {
+            if (yieldChartInst) yieldChartInst.destroy();
+            const ctx = document.getElementById('yield-chart').getContext('2d');
+            yieldChartInst = new Chart(ctx, { type: 'line', data: { labels: ['Aug', 'Sep', 'Oct', 'Nov', 'Dec'], datasets: [{ label: 'Yield (q/ha)', data: [8, 22, 48, 54, 52], borderColor: '#3b6d11', backgroundColor: 'rgba(59,109,17,0.08)', fill: true, tension: 0.4, pointBackgroundColor: '#3b6d11', pointRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } } } });
+        }
+
+        /* ─── INIT TABS ─── */
+        renderFertilizer('Rice');
+        renderPesticide('Rice');
+        renderGrowth('Rice');
+        renderHarvestDetails('Rice');
+
+        /* ─── AUTO-LOCATE ─── */
+        navigator.geolocation?.getCurrentPosition(pos => {
+            fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&appid=4b1c1adf9f864c79850d37a31a0d1e6a&units=metric`)
+                .then(r => r.json()).then(d => { document.getElementById('loc-name').textContent = d.name + ', ' + d.sys.country; }).catch(() => { });
+        }, () => { document.getElementById('loc-name').textContent = 'India'; });
+
+        /* ═══════════════════════════════════════════
+           AI CHATBOT
+        ═══════════════════════════════════════════ */
+        const chatOverlay = document.getElementById('chat-overlay');
+        const chatPanel = document.getElementById('chat-panel');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const voiceBtn = document.getElementById('voice-btn');
+        const voiceWave = document.getElementById('voice-wave');
+        const voiceStatus = document.getElementById('voice-status');
+        const quickChips = document.getElementById('quick-chips');
+        let chatHistory = [];
+        let isRecording = false;
+        let recognition = null;
+
+        document.getElementById('open-chat').addEventListener('click', openChat);
+        document.getElementById('close-chat').addEventListener('click', closeChat);
+        chatOverlay.addEventListener('click', closeChat);
+
+        function openChat() {
+            chatPanel.classList.add('open');
+            chatOverlay.classList.add('open');
+            if (chatMessages.children.length === 0) addBotMessage('🌾 Namaste! I\'m KisanAI, your smart farming assistant.\n\nI can help you with:\n• Crop recommendations\n• Fertilizer & pesticide advice\n• Watering schedules\n• Harvest timing\n• Soil health tips\n\nAsk me anything about farming, or tap a quick question below!');
+            setTimeout(() => chatInput.focus(), 300);
+        }
+        function closeChat() {
+            chatPanel.classList.remove('open');
+            chatOverlay.classList.remove('open');
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        });
+        chatInput.addEventListener('input', () => {
+            chatInput.style.height = 'auto';
+            chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
+        });
+
+        document.querySelectorAll('.q-chip').forEach(c => {
+            c.addEventListener('click', () => {
+                chatInput.value = c.dataset.q;
+                sendMessage();
+                quickChips.style.display = 'none';
+            });
+        });
+
+        function timeStr() {
+            return new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+
+        function addUserMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'msg-wrap user';
+            div.innerHTML = `
+    <div class="msg-avatar user-av"><i class="ti ti-user"></i></div>
+    <div>
+      <div class="msg-bubble user-b">${escHtml(text)}</div>
+      <div class="msg-time">${timeStr()}</div>
+    </div>`;
+            chatMessages.appendChild(div);
+            scrollChat();
+        }
+
+        function addBotMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'msg-wrap bot';
+            div.innerHTML = `
+    <div class="msg-avatar bot-av"><i class="ti ti-robot"></i></div>
+    <div>
+      <div class="msg-bubble bot-b">${formatBotText(text)}</div>
+      <div class="msg-time">${timeStr()} · KisanAI</div>
+    </div>`;
+            chatMessages.appendChild(div);
+            scrollChat();
+            speakText(text);
+        }
+
+        function showTyping() {
+            const div = document.createElement('div');
+            div.className = 'msg-wrap bot';
+            div.id = 'typing-indicator';
+            div.innerHTML = `
+    <div class="msg-avatar bot-av"><i class="ti ti-robot"></i></div>
+    <div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+            chatMessages.appendChild(div);
+            scrollChat();
+        }
+
+        function removeTyping() {
+            document.getElementById('typing-indicator')?.remove();
+        }
+
+        function scrollChat() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function escHtml(t) {
+            return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+        }
+
+        function formatBotText(t) {
+            return t
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
+        }
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+            addUserMessage(text);
+            showTyping();
+            chatHistory.push({ role: 'user', content: text });
+
+            try {
+                const resp = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-20250514',
+                        max_tokens: 1000,
+                        system: `You are KisanAI, an expert Indian agricultural assistant. You help farmers with:
+- Crop recommendations based on soil, season, climate
+- Fertilizer types, quantities, and schedules
+- Pest and disease identification and treatment
+- Irrigation and watering schedules
+- Harvest timing and post-harvest storage
+- Soil health improvement
+- Weather-based farming advice
+
+Respond in clear, simple English suitable for farmers. Use bullet points, emojis for clarity. Keep answers concise (under 200 words). Include practical, actionable advice. Reference Indian farming conditions (Kharif/Rabi/Zaid seasons, common Indian crops like rice, wheat, cotton, sugarcane). If asked in Hindi or local language, respond accordingly.`,
+                        messages: chatHistory.slice(-10)
+                    })
+                });
+                const data = await resp.json();
+                removeTyping();
+                const reply = data.content?.[0]?.text || 'Sorry, I could not process that. Please try again.';
+                chatHistory.push({ role: 'assistant', content: reply });
+                addBotMessage(reply);
+            } catch (err) {
+                removeTyping();
+                const fallback = getOfflineReply(text);
+                chatHistory.push({ role: 'assistant', content: fallback });
+                addBotMessage(fallback);
+            }
+        }
+
+        /* ─── OFFLINE FALLBACK ─── */
+        function getOfflineReply(q) {
+            const ql = q.toLowerCase();
+            if (ql.includes('rice') || ql.includes('paddy')) return '🌾 **Rice farming tips:**\n\n• Best grown in Kharif season (June–Sep)\n• Requires alluvial or clay soil\n• Water requirement: 150–200 cm rainfall\n• Apply Urea 50 kg/acre + DAP 25 kg/acre\n• Watch for Brown Plant Hopper & Blast disease\n• Harvest at 80–85% grain maturity';
+            if (ql.includes('wheat')) return '🌾 **Wheat farming tips:**\n\n• Ideal for Rabi season (Oct–Mar)\n• Grows best in alluvial plains\n• Requires 4–6 irrigations\n• Apply Urea 60 kg/acre + SSP 30 kg/acre\n• Watch for Yellow Rust disease\n• Harvest when moisture is 14–16%';
+            if (ql.includes('fertilizer') || ql.includes('fertiliser')) return '🌿 **Fertilizer guide:**\n\n• **N (Nitrogen)** – for leaf & stem growth → Urea\n• **P (Phosphorus)** – for roots & flowering → DAP/SSP\n• **K (Potassium)** – for grain/fruit quality → MOP\n• Apply 1/3 N at sowing, rest in splits\n• Always do soil test before application';
+            if (ql.includes('water') || ql.includes('irrigation')) return '💧 **Irrigation tips:**\n\n• Rice: keep 2–5 cm standing water\n• Wheat: 4–6 critical irrigations\n• Cotton: moderate water; avoid waterlogging\n• Drip irrigation saves 40–60% water\n• Irrigate in early morning or evening\n• Avoid water stress at flowering stage';
+            if (ql.includes('pest') || ql.includes('disease')) return '🐛 **Pest management:**\n\n• Scout fields twice weekly\n• Use IPM (Integrated Pest Management)\n• Neem-based sprays for mild infestations\n• Chemical pesticides only when threshold crossed\n• Spray early morning or late evening\n• Rotate pesticides to prevent resistance';
+            if (ql.includes('harvest')) return '🌾 **Harvest guidance:**\n\n• Harvest at right moisture level (14–16%)\n• Early morning harvesting is ideal\n• Avoid harvesting during rain or high humidity\n• Clean and dry grains before storage\n• Store at < 15°C, humidity < 65%\n• Use hermetic bags to prevent pests';
+            if (ql.includes('soil')) return '🪱 **Soil health tips:**\n\n• Do soil test every 2–3 seasons\n• Add organic matter (compost/FYM)\n• Practice crop rotation\n• Avoid over-tilling\n• Maintain soil pH 6–7 for most crops\n• Green manuring improves nitrogen';
+            return '🌱 I\'m currently offline but here to help!\n\nFor best farming results:\n• Match crop to soil type & season\n• Follow recommended fertilizer doses\n• Scout regularly for pests\n• Irrigate at critical crop stages\n\nPlease reconnect to internet for full AI-powered responses.';
+        }
+
+        /* ─── VOICE INPUT ─── */
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = 'en-IN';
+
+            recognition.onstart = () => {
+                isRecording = true;
+                voiceBtn.classList.add('recording');
+                voiceBtn.innerHTML = '<i class="ti ti-microphone-off"></i>';
+                voiceWave.classList.add('active');
+                voiceStatus.classList.remove('hidden');
+            };
+            recognition.onresult = e => {
+                const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+                chatInput.value = transcript;
+                chatInput.style.height = 'auto';
+                chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
+            };
+            recognition.onend = () => {
+                isRecording = false;
+                voiceBtn.classList.remove('recording');
+                voiceBtn.innerHTML = '<i class="ti ti-microphone"></i>';
+                voiceWave.classList.remove('active');
+                voiceStatus.classList.add('hidden');
+                if (chatInput.value.trim()) sendMessage();
+            };
+            recognition.onerror = e => {
+                isRecording = false;
+                voiceBtn.classList.remove('recording');
+                voiceBtn.innerHTML = '<i class="ti ti-microphone"></i>';
+                voiceWave.classList.remove('active');
+                voiceStatus.classList.add('hidden');
+                addBotMessage('🎙️ Voice input error: ' + e.error + '. Please type your question instead.');
+            };
+        } else {
+            voiceBtn.title = 'Voice not supported in this browser';
+            voiceBtn.style.opacity = '0.4';
+        }
+
+        voiceBtn.addEventListener('click', () => {
+            if (!SpeechRecognition) { addBotMessage('Voice input is not supported in your browser. Please use Chrome for voice features.'); return; }
+            if (isRecording) { recognition.stop(); }
+            else { recognition.start(); }
+        });
+
+        /* ─── TEXT-TO-SPEECH ─── */
+        function speakText(text) {
+            if (!window.speechSynthesis) return;
+            const clean = text.replace(/<[^>]*>/g, '').replace(/[🌾💧🌿🐛🪱]/g, '').trim().slice(0, 300);
+            const utt = new SpeechSynthesisUtterance(clean);
+            utt.rate = 0.95; utt.pitch = 1.0; utt.volume = 0.8;
+            const voices = speechSynthesis.getVoices();
+            const pref = voices.find(v => v.lang.startsWith('en-IN')) || voices.find(v => v.lang.startsWith('en'));
+            if (pref) utt.voice = pref;
+            speechSynthesis.cancel();
+            speechSynthesis.speak(utt);
+        }
+        speechSynthesis.onvoiceschanged = () => { };
+    </script>
+</body>
+
+</html>
