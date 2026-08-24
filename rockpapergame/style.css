@@ -1,0 +1,39 @@
+* {
+    margin: 0%;
+    padding: 0%;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+}
+
+
+h1 {
+    text-align: center;
+    margin-top: 100px;
+
+}
+
+#game {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 50px;
+}
+
+button {
+    margin: 10px;
+    object-fit: cover;
+}
+
+img {
+    height: 100px;
+    width: 100px;
+    object-fit: cover;
+}
+
+h2 {
+    text-align: center;
+}
