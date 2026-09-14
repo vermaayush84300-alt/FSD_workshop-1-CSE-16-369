@@ -1,0 +1,21 @@
+{
+  "name": "fsdworkshop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "helloworld.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vermaayush84300-alt/FSD_workshop-1-CSE-16-369.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/vermaayush84300-alt/FSD_workshop-1-CSE-16-369/issues"
+  },
+  "homepage": "https://github.com/vermaayush84300-alt/FSD_workshop-1-CSE-16-369#readme"
+}

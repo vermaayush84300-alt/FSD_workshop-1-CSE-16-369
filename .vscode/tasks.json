@@ -1,0 +1,73 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Push repository changes",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"status",
+				"--short",
+				"--branch"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Stage all repository code",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"add",
+				"--all"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Review staged files",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"status",
+				"--short"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Stage source without dependencies",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"reset"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Stage source files",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"add",
+				"--all",
+				":(exclude)**/node_modules/**",
+				":(exclude)node_modules/**"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Stage repository sources",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"add",
+				"--all"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}
