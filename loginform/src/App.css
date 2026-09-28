@@ -1,0 +1,437 @@
+/* =========================
+   RESET
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #ffffff;
+  color: #1f2937;
+}
+
+
+/* =========================
+   LOGIN / SIGNUP PAGE
+========================= */
+
+.page-container {
+  min-height: 100vh;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 30px;
+
+  background: #ffffff;
+}
+
+
+/* =========================
+   AUTH CARD
+========================= */
+
+.auth-card {
+  width: 100%;
+  max-width: 430px;
+
+  padding: 42px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 16px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.signup-card {
+  max-width: 460px;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.auth-header h1 {
+  font-size: 30px;
+  font-weight: 700;
+  color: #111827;
+
+  margin-bottom: 8px;
+}
+
+.auth-header h1::after {
+  content: "";
+
+  display: block;
+
+  width: 45px;
+  height: 3px;
+
+  margin: 12px auto 0;
+
+  background: #4f46e5;
+
+  border-radius: 10px;
+}
+
+.auth-header p {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+
+/* =========================
+   INPUT
+========================= */
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #374151;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.input-group label span {
+  color: #9ca3af;
+  font-weight: normal;
+}
+
+.input-group input {
+  width: 100%;
+  height: 48px;
+
+  padding: 0 14px;
+
+  background: #ffffff;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 8px;
+
+  outline: none;
+
+  color: #111827;
+
+  font-size: 14px;
+}
+
+.input-group input:hover {
+  border-color: #9ca3af;
+}
+
+.input-group input:focus {
+  border-color: #4f46e5;
+
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.input-group input::placeholder {
+  color: #9ca3af;
+}
+
+
+/* =========================
+   LOGIN / SIGNUP BUTTON
+========================= */
+
+.main-button {
+  width: 100%;
+  height: 49px;
+
+  border: none;
+  border-radius: 8px;
+
+  margin-top: 5px;
+
+  background: #4f46e5;
+
+  color: white;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.main-button:hover {
+  background: #4338ca;
+}
+
+
+/* =========================
+   LOGIN / SIGNUP SWITCH
+========================= */
+
+.switch-text {
+  margin-top: 25px;
+
+  text-align: center;
+
+  color: #6b7280;
+
+  font-size: 14px;
+}
+
+.link-button {
+  border: none;
+
+  background: transparent;
+
+  color: #4f46e5;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  margin-left: 5px;
+
+  cursor: pointer;
+}
+
+.link-button:hover {
+  color: #3730a3;
+
+  text-decoration: underline;
+}
+
+
+/* =========================
+   ERROR MESSAGE
+========================= */
+
+.error-message {
+  color: #b91c1c;
+
+  background: #fef2f2;
+
+  border: 1px solid #fecaca;
+
+  border-radius: 7px;
+
+  padding: 10px 12px;
+
+  font-size: 13px;
+
+  margin-bottom: 15px;
+}
+
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.dashboard-page {
+  min-height: 100vh;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 30px;
+
+  background: #ffffff;
+}
+
+
+/* =========================
+   DASHBOARD CARD
+========================= */
+
+.dashboard-card {
+  width: 100%;
+  max-width: 650px;
+
+  padding: 50px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 18px;
+
+  text-align: center;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================
+   DASHBOARD ICON
+========================= */
+
+.dashboard-icon {
+  width: 75px;
+  height: 75px;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  margin: 0 auto 22px;
+
+  background: #eef2ff;
+
+  border: 1px solid #c7d2fe;
+
+  border-radius: 50%;
+
+  font-size: 36px;
+}
+
+
+/* =========================
+   DASHBOARD TITLE
+========================= */
+
+.dashboard-card h1 {
+  font-size: 32px;
+
+  font-weight: 700;
+
+  color: #111827;
+
+  margin-bottom: 10px;
+}
+
+.dashboard-card h1 span {
+  color: #4f46e5;
+}
+
+.dashboard-message {
+  color: #6b7280;
+
+  font-size: 15px;
+
+  margin-bottom: 28px;
+}
+
+
+/* =========================
+   USER INFORMATION
+========================= */
+
+.user-info {
+  text-align: left;
+
+  padding: 20px;
+
+  margin-bottom: 25px;
+
+  background: #f9fafb;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 12px;
+}
+
+.user-info p {
+  color: #4b5563;
+
+  font-size: 14px;
+
+  padding: 10px 0;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.user-info p:first-child {
+  padding-top: 0;
+}
+
+.user-info p:last-child {
+  border-bottom: none;
+
+  padding-bottom: 0;
+}
+
+.user-info strong {
+  color: #111827;
+}
+
+
+/* =========================
+   LOGOUT BUTTON
+========================= */
+
+.logout-button {
+  padding: 12px 32px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #ef4444;
+
+  color: white;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background: #dc2626;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+  .page-container,
+  .dashboard-page {
+    padding: 15px;
+  }
+
+  .auth-card {
+    padding: 30px 22px;
+  }
+
+  .dashboard-card {
+    padding: 35px 22px;
+  }
+
+  .auth-header h1 {
+    font-size: 26px;
+  }
+
+  .dashboard-card h1 {
+    font-size: 26px;
+  }
+}
